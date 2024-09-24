@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Virtual environments
+env/
+venv/
+ENV/
+ENV/
+
+# Docker
+*.img
+*.tar
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+.idea/
+out/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.swp
+
+# IDEs
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.idea/
+
+# Misc
+*.log
+*.tmp
+*.bak
+*.orig
+*.pid
+*.seed
+
+# Test files
+*.coverage
+nosetests.xml
+coverage.xml
+*.cover
+
+# Ignore any other files or directories you don't want to track
+
