@@ -1,3 +1,13 @@
+CREATE USER 'dsk_admin'@'%' IDENTIFIED BY 'dsk';
+
+GRANT ALL PRIVILEGES ON * . * TO 'dsk_admin'@'%';
+
+FLUSH PRIVILEGES;
+
+CREATE DATABASE IF NOT EXISTS dsk;
+
+USE dsk;
+
 CREATE TABLE IF NOT EXISTS DSK_APPLICATION (
     app_id int NOT NULL AUTO_INCREMENT,
     app_name varchar(255) NOT NULL,

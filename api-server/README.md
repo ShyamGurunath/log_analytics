@@ -1,4 +1,4 @@
-# Dsk Logger api server
+# Dsk DskLogger api server
 
 ## How to run the application
 - docker build -t dsk_api_server:v1 --file Dockerfile-api-server .

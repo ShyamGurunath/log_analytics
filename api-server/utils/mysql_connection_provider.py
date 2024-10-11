@@ -1,6 +1,4 @@
 import mysql.connector
-import logging
-
 from config import Config
 
 
@@ -12,7 +10,8 @@ class MySQLConnectionProvider:
                           user=Config.USER,
                           password=Config.PASSWORD,
                           database=Config.DATABASE)
-        logging.info("MySQL connection provider initialized")
+        print(self.connection)
+        print("MySQL connection provider initialized")
 
     def get_connection(self):
         return self.connection

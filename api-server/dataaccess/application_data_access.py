@@ -11,9 +11,8 @@ class ApplicationDataAccess:
         cursor = None
         try:
             connection = self.db_provider.get_connection()
-            cursor = connection.cursor()
+            cursor = connection.cursor(buffered=True)
             cursor.execute("INSERT INTO DSK_APPLICATION (app_name) VALUES (%s)", (app_name,))
-            print("Inserted")
             if cursor.rowcount <= 0:
                 return Response(success=False, message="Failed to Insert", data={})
             connection.commit()
@@ -26,7 +25,7 @@ class ApplicationDataAccess:
         cursor = None
         try:
             connection = self.db_provider.get_connection()
-            cursor = connection.cursor()
+            cursor = connection.cursor(buffered=True)
             cursor.execute("SELECT * FROM DSK_APPLICATION")
             rows = cursor.fetchall()
             if cursor.rowcount <= 0:
@@ -35,22 +34,3 @@ class ApplicationDataAccess:
         finally:
             if cursor is not None:
                 cursor.close()
-
-    def fetch_application(self, app_name: str) -> Response:
-        cursor = None
-        try:
-            connection = self.db_provider.get_connection()
-            cursor = connection.cursor()
-            cursor.execute("SELECT * FROM DSK_APPLICATION WHERE app_name=%s", (app_name,))
-            rows = cursor.fetchone()
-            if cursor.rowcount <= 0:
-                return Response(success=False, message="Failed to Get data since its empty", data=[])
-            return Response(success=True, message="Successfully Fetched", data={
-                "app_name": rows[1],
-                "id": rows[0],
-            })
-        finally:
-            if cursor is not None:
-                cursor.close()
-
-
