@@ -134,3 +134,20 @@ services:
     restart: on-failure
     ports:
       - "9090:9090"
+
+  dsk_cosumer_service:
+    image: dsk_consumer_service:latest
+    build:
+      context: ./consumer_service
+      dockerfile: Dockerfile
+    container_name: docker_consumer
+    links:
+      - dsk_api_server
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-ui
+      - dsk_elastic_search
+    depends_on:
+      - dsk_api_server
+    restart: on-failure

@@ -1,0 +1,50 @@
+package com.dsk.consumer.util;
+
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class RetryDriver<T>
+{
+    static Logger logger = Logger.getLogger(RetryDriver.class.getName());
+
+    int max_attempts;
+    int retry_delay;
+    int retry_count;
+
+    public RetryDriver(int max_attempts, int retry_delay)
+    {
+        this.max_attempts = max_attempts;
+        this.retry_count = retry_delay;
+    }
+
+    public T retry(Callable<T> callable) throws InterruptedException
+    {
+        T result = null;
+        for (int i = 0; i < this.max_attempts; i++)
+        {
+            try
+            {
+               result = callable.call();
+               break;
+            }
+            catch (Exception e)
+            {
+                this.retry_count++;
+                if (this.retry_count >= this.max_attempts)
+                {
+                    logger.warning("Exception due to "+e.getMessage());
+                    throw new RuntimeException("Max retries reached");
+                }
+                logger.warning("Exception due to "+e.getMessage());
+                logger.log(Level.SEVERE, "Attempt " + this.retry_count + ". Retrying after " + this.retry_delay + " seconds");
+                Thread.sleep(this.retry_delay * 1000L);
+            }
+        }
+        if (result == null)
+        {
+            throw new RuntimeException("Result is null");
+        }
+        return result;
+    }
+}

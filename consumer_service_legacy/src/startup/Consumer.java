@@ -5,18 +5,19 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
+import strategy.SaveStrategy;
 import util.Config;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.DskLogger;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Consumer implements Runnable
 {
 
-    private final DskLogger LOGGER;
+    private final Logger LOGGER;
 
     private final Properties _consumerProperties;
 
@@ -26,16 +27,20 @@ public class Consumer implements Runnable
 
     private final List<Integer> partitions;
 
-    public Consumer(Integer threadNumber, String topic, List<Integer> partitions)
+    private final SaveStrategy _strategy;
+
+    public Consumer(Integer threadNumber, String topic, List<Integer> partitions, SaveStrategy strategy)
     {
         this._threadNumber = threadNumber;
-        this.LOGGER = DskLogger.getLogger(Consumer.class.getName()+"-"+threadNumber);
+        this.LOGGER = Logger.getLogger(Consumer.class.getName()+"-"+threadNumber);
         this.topic = topic;
         this.partitions = partitions;
         this._consumerProperties = Config.getConsumerProps(System.getProperty("dsk.bootstrap.servers"));
-        System.out.println("I am a Kafka startup.Consumer with Thread - "+this._threadNumber);
+        this._strategy = strategy;
+        System.out.println("I am a Kafka startup.Consumer with Thread - "+this._threadNumber+" with save strategy "+strategy.getClass().getName());
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run()
     {
@@ -55,9 +60,9 @@ public class Consumer implements Runnable
                         consumer.poll(Duration.ofMillis(5000));
                 for (ConsumerRecord<String, String> record : records)
                 {
-                    //TODO: Implement Es strategy
                     System.out.println("startup.Consumer - " + this._threadNumber + " Key: " + record.key() + ", Value: " + record.value().getPageVisits());
                     System.out.println("startup.Consumer - " + this._threadNumber + " Partition: " + record.partition() + ", Offset:" + record.offset());
+                    this._strategy.save();
                 }
                 consumer.commitSync();
             }
